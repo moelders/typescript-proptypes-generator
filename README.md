@@ -89,7 +89,7 @@ and mutating the JS file to include auto generated prop types from the declarati
 
 The use case for this project is to:
 
-1. Expose a generic way to export interfaces from TS files and convert them into prop types for JS files
+1. Bundle in a script to do the generation
 2. Not have any coupling to folder structures, declaration files or React components
 3. Not mutate input files
 
