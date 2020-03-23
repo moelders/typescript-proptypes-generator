@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`generate creates a proptype output from an interface 1`] = `
+Array [
+  Array [
+    "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.js",
+    "import PropTypes from 'prop-types';
+
+export const TestInterface = {
+	/**
+	 * @ignore
+	 */
+	booleanField: PropTypes.bool.isRequired,
+	/**
+	 * @ignore
+	 */
+	numericField: PropTypes.number.isRequired,
+	/**
+	 * @ignore
+	 */
+	objectField: PropTypes.shape({
+		booleanField: PropTypes.bool.isRequired,
+		numericField: PropTypes.number.isRequired,
+	}).isRequired,
+};
+",
+  ],
+]
+`;

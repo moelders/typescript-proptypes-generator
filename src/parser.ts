@@ -99,7 +99,6 @@ export function parseFromProgram(
 	const reactImports: string[] = [];
 
 	if (sourceFile) {
-		ts.forEachChild(sourceFile, visitImports);
 		ts.forEachChild(sourceFile, visit);
 	} else {
 		throw new Error(`Program doesn't contain file "${filePath}"`);
@@ -107,151 +106,11 @@ export function parseFromProgram(
 
 	return programNode;
 
-	function visitImports(node: ts.Node) {
-		if (
-			ts.isImportDeclaration(node) &&
-			ts.isStringLiteral(node.moduleSpecifier) &&
-			node.moduleSpecifier.text === 'react' &&
-			node.importClause
-		) {
-			const imports = ['Component', 'PureComponent', 'memo', 'forwardRef'];
-
-			// import x from 'react'
-			if (node.importClause.name) {
-				const nameText = node.importClause.name.text;
-				reactImports.push(...imports.map((x) => `${nameText}.${x}`));
-			}
-
-			// import {x, y as z} from 'react'
-			const bindings = node.importClause.namedBindings;
-			if (bindings) {
-				if (ts.isNamedImports(bindings)) {
-					bindings.elements.forEach((spec) => {
-						const nameIdentifier = spec.propertyName || spec.name;
-						const nameText = nameIdentifier.getText();
-						if (imports.includes(nameText)) {
-							reactImports.push(spec.name.getText());
-						}
-					});
-				}
-				// import * as x from 'react'
-				else {
-					const nameText = bindings.name.text;
-					reactImports.push(...imports.map((x) => `${nameText}.${x}`));
-				}
-			}
-		}
-	}
-
 	function visit(node: ts.Node) {
-		// function x(props: type) { return <div/> }
-		if (ts.isFunctionDeclaration(node) && node.name && node.parameters.length === 1) {
-			parseFunctionComponent(node);
+		if (ts.isInterfaceDeclaration(node)) {
+			var type = checker.getTypeAtLocation(node.name);
+			parsePropsType(node.name.getText(), type);
 		}
-		// const x = ...
-		else if (ts.isVariableStatement(node)) {
-			ts.forEachChild(node.declarationList, (variableNode) => {
-				// x = (props: type) => { return <div/> }
-				// x = function(props: type) { return <div/> }
-				// x = function y(props: type) { return <div/> }
-				// x = react.memo((props:type) { return <div/> })
-
-				if (ts.isVariableDeclaration(variableNode) && variableNode.name) {
-					const type = checker.getTypeAtLocation(variableNode.name);
-					if (!variableNode.initializer) {
-						if (
-							checkDeclarations &&
-							type.aliasSymbol &&
-							type.aliasTypeArguments &&
-							checker.getFullyQualifiedName(type.aliasSymbol) === 'React.ComponentType'
-						) {
-							parsePropsType(variableNode.name.getText(), type.aliasTypeArguments[0]);
-						}
-					} else if (
-						(ts.isArrowFunction(variableNode.initializer) ||
-							ts.isFunctionExpression(variableNode.initializer)) &&
-						variableNode.initializer.parameters.length === 1
-					) {
-						parseFunctionComponent(variableNode);
-					}
-					// x = react.memo((props:type) { return <div/> })
-					else if (
-						ts.isCallExpression(variableNode.initializer) &&
-						variableNode.initializer.arguments.length > 0
-					) {
-						const callString = variableNode.initializer.expression.getText();
-						const arg = variableNode.initializer.arguments[0];
-						if (
-							reactImports.includes(callString) &&
-							(ts.isArrowFunction(arg) || ts.isFunctionExpression(arg)) &&
-							arg.parameters.length > 0
-						) {
-							const symbol = checker.getSymbolAtLocation(arg.parameters[0].name);
-							if (symbol) {
-								parsePropsType(
-									variableNode.name.getText(),
-									checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration)
-								);
-							}
-						}
-					}
-				}
-			});
-		} else if (
-			ts.isClassDeclaration(node) &&
-			node.name &&
-			node.heritageClauses &&
-			node.heritageClauses.length === 1
-		) {
-			const heritage = node.heritageClauses[0];
-			if (heritage.types.length !== 1) return;
-
-			const arg = heritage.types[0];
-			if (!arg.typeArguments) return;
-
-			if (reactImports.includes(arg.expression.getText())) {
-				parsePropsType(node.name.getText(), checker.getTypeAtLocation(arg.typeArguments[0]));
-			}
-		}
-	}
-
-	function isTypeJSXElementLike(type: ts.Type): boolean {
-		if (type.isUnion()) {
-			return type.types.every(
-				(subType) => subType.flags & ts.TypeFlags.Null || isTypeJSXElementLike(subType)
-			);
-		} else if (type.symbol) {
-			const name = checker.getFullyQualifiedName(type.symbol);
-			return name === 'global.JSX.Element' || name === 'React.ReactElement';
-		}
-
-		return false;
-	}
-
-	function parseFunctionComponent(node: ts.VariableDeclaration | ts.FunctionDeclaration) {
-		if (!node.name) {
-			return;
-		}
-
-		const symbol = checker.getSymbolAtLocation(node.name);
-		if (!symbol) {
-			return;
-		}
-
-		const signature = checker
-			.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration)
-			.getCallSignatures()[0];
-
-		if (!isTypeJSXElementLike(signature.getReturnType())) {
-			return;
-		}
-
-		const type = checker.getTypeOfSymbolAtLocation(
-			signature.parameters[0],
-			signature.parameters[0].valueDeclaration
-		);
-
-		parsePropsType(node.name.getText(), type);
 	}
 
 	function parsePropsType(name: string, type: ts.Type) {

@@ -1,10 +1,15 @@
-import * as ttp from '../src';
 import path from 'path';
+import fse from 'fs-extra'
+import generate from '../src';
 
-it('runs', () => {
-	const tsconfig = ttp.loadConfig(path.resolve(__dirname, '../tsconfig.json'));
-
-	const parsed = ttp.parseFile(path.resolve(__dirname, 'testFile.d.ts'), tsconfig);
-
-	expect(parsed).toMatchSnapshot();
+describe('generate', () => {
+	test('creates a proptype output from an interface', async () => {
+		const fseWriteSpy = jest.spyOn(fse, 'writeFile').mockImplementation(() => Promise.resolve());
+		await generate({
+			tsConfig: path.resolve(__dirname, '../tsconfig.json'),
+			prettierConfig: path.resolve(__dirname, '../.prettierrc'),
+			inputDir: path.resolve(__dirname, './fixtures'),
+		})
+		expect(fseWriteSpy.mock.calls).toMatchSnapshot();
+	})
 });
