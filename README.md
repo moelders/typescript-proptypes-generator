@@ -63,12 +63,12 @@ output JS file:
 ```javascript
 // ./interface.js
 export const TestInterface = {
-	booleanField: PropTypes.bool.isRequired,
-	numericField: PropTypes.number.isRequired,
-	objectField: PropTypes.shape({
-		booleanField: PropTypes.bool.isRequired,
-		numericField: PropTypes.number.isRequired,
-	}).isRequired,
+  booleanField: PropTypes.bool.isRequired,
+  numericField: PropTypes.number.isRequired,
+  objectField: PropTypes.shape({
+    booleanField: PropTypes.bool.isRequired,
+    numericField: PropTypes.number.isRequired,
+  }).isRequired,
 };
 ```
 
