@@ -2,7 +2,7 @@ import fse from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as injector from './injector';
-import * as loader from './loader';
+import * as configure from './config';
 import * as parser from './parser';
 import * as prettier from 'prettier';
 import globCallback from 'glob';
@@ -13,104 +13,67 @@ const glob = promisify(globCallback);
 
 const verbose = process.argv.includes('--verbose');
 
-enum GenerateResult {
-	Success,
-	Skipped,
-	NoComponent,
-	Failed
-}
-
 export interface Config {
 	tsConfig: string;
-  	prettierConfig: string;
-  	inputDir: string;
+	prettierConfig: string;
+	inputPattern: string | string[];
 	outputDir?: string;
-	fileMatch?: string;
 }
 
 export default async function generate({
 	tsConfig: tsConfigPath,
-  	prettierConfig: prettierConfigPath,
-  	inputDir,
+	prettierConfig: prettierConfigPath,
+	inputPattern,
 	outputDir,
-	fileMatch = '*.ts'
 }: Config) {
-	const tsconfig = loader.loadConfig(path.resolve(__dirname, tsConfigPath));
-	const prettierConfig = prettier.resolveConfig.sync(path.resolve(__dirname, prettierConfigPath));
-
+	const inputPaths = _.isString(inputPattern) ? [inputPattern] : inputPattern;
+	const absoluteTsConfigPath = configure.getAbsolutePath(tsConfigPath);
+	const absolutePrettierConfigPath = configure.getAbsolutePath(prettierConfigPath);
+	const absoluteInputPatterns = inputPaths.map(configure.getAbsolutePath);
+	const absoluteOutputDir = outputDir && configure.getAbsolutePath(outputDir);
+	const tsconfig = configure.loadTSConfig(tsConfigPath);
+	const prettierConfig = configure.loadPrettierConfig(absolutePrettierConfigPath);
 	const allFiles = await Promise.all(
-		[, path.resolve(__dirname, inputDir)].map(folderPath => {
-			return glob('*.ts', {
+		absoluteInputPatterns.map(absoluteInputPattern => {
+			return glob(absoluteInputPattern, {
 				absolute: true,
-				cwd: folderPath
 			});
 		})
 	);
 	const files = _.compact(_.flatten(allFiles));
 	const program = parser.createProgram(files, tsconfig);
 
-	const promises = files.map<Promise<GenerateResult>>(async tsFilePath => {
-		const jsFilePath = tsFilePath.replace('.ts', '.js');
-		return generateProptypesForFile(tsFilePath, jsFilePath, prettierConfig, program);
+	const promises = files.map<Promise<void>>(async inputFilePath => {
+		const inputFileExt = path.extname(inputFilePath);
+		if (absoluteOutputDir) {
+			const outputFileName = path.basename(inputFilePath).replace(inputFileExt, '.js');
+			const outputFilePath = path.resolve(absoluteOutputDir, outputFileName);
+			return generateProptypesForFile(inputFilePath, outputFilePath, prettierConfig, program);
+		}
+		// If no output directory was provided, put generated JS the file adjacent to the input file
+		const outputFilePath = inputFilePath.replace(inputFileExt, '.js');
+		return generateProptypesForFile(inputFilePath, outputFilePath, prettierConfig, program);
 	});
 
-	const results = await Promise.all(promises);
-
-	if (verbose) {
-		files.forEach((file, index) => {
-			console.log('%s - %s', GenerateResult[results[index]], path.basename(file, '.ts'));
-		});
-	}
-
-	console.log('--- Summary ---');
-	const groups = _.groupBy(results, x => x);
-
-	_.forOwn(groups, (count, key) => {
-		console.log('%s: %d', GenerateResult[(key as unknown) as GenerateResult], count.length);
-	});
-
-	console.log('Total: %d', results.length);
+	await Promise.all(promises);
 }
 
 async function generateProptypesForFile(
-	tsFile: string,
-	jsFile: string,
+	inputFilePath: string,
+	outputFilePath: string,
 	prettierConfig: prettier.Options | null,
-	program: ts.Program
-): Promise<GenerateResult> {
-	const proptypes = parser.parseFromProgram(tsFile, program, {
-		shouldResolveObject: ({ name }) => {
-			if (name.toLowerCase().endsWith('classes') || name === 'theme' || name.endsWith('Props')) {
-				return false;
-			}
-			return undefined;
-		}
-	});
-	if (proptypes.body.length === 0) {
-		return GenerateResult.NoComponent;
-	}
-
-	proptypes.body.forEach(component => {
-		component.types.forEach(prop => {
-			if (prop.name === 'classes' && prop.jsDoc) {
-				prop.jsDoc += '\nSee [CSS API](#css) below for more details.';
-			} else if (prop.name === 'children' && !prop.jsDoc) {
-				prop.jsDoc = 'The content of the component.';
-			} else if (!prop.jsDoc) {
-				prop.jsDoc = '@ignore';
-			}
-		});
-	});
-
+	program: ts.Program,
+): Promise<void> {
+	const proptypes = parser.parseFromProgram(inputFilePath, program);
 	const result = injector.inject(proptypes);
-	if (!result) {
-		return GenerateResult.Failed;
-	}
 
+	if (!result) {
+		throw new Error(`Failed to generate prop types for ${inputFilePath}`);
+	}
+	
 	const prettified = prettier.format(result, {
 		...prettierConfig,
-		filepath: jsFile
+		filepath: outputFilePath
 	});
-	await fse.writeFile(jsFile, prettified);
-	return GenerateResult.Success;
+	await fse.writeFile(outputFilePath, prettified);
 }

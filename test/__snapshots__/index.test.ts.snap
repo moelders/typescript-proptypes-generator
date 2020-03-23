@@ -1,23 +1,85 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`generate creates a proptype output from an interface 1`] = `
+exports[`generate creates a proptype output from a nested input pattern 1`] = `
 Array [
   Array [
     "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.js",
     "import PropTypes from 'prop-types';
 
 export const TestInterface = {
-	/**
-	 * @ignore
-	 */
 	booleanField: PropTypes.bool.isRequired,
-	/**
-	 * @ignore
-	 */
 	numericField: PropTypes.number.isRequired,
-	/**
-	 * @ignore
-	 */
+	objectField: PropTypes.shape({
+		booleanField: PropTypes.bool.isRequired,
+		numericField: PropTypes.number.isRequired,
+	}).isRequired,
+};
+",
+  ],
+  Array [
+    "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/nestedFixture/nestedFixtureInterface.js",
+    "import PropTypes from 'prop-types';
+
+export const NestedTestInterface = {
+	booleanField: PropTypes.bool.isRequired,
+	numericField: PropTypes.number.isRequired,
+	objectField: PropTypes.shape({
+		booleanField: PropTypes.bool.isRequired,
+		numericField: PropTypes.number.isRequired,
+	}).isRequired,
+};
+",
+  ],
+]
+`;
+
+exports[`generate creates a proptype output from an input file 1`] = `
+Array [
+  Array [
+    "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.js",
+    "import PropTypes from 'prop-types';
+
+export const TestInterface = {
+	booleanField: PropTypes.bool.isRequired,
+	numericField: PropTypes.number.isRequired,
+	objectField: PropTypes.shape({
+		booleanField: PropTypes.bool.isRequired,
+		numericField: PropTypes.number.isRequired,
+	}).isRequired,
+};
+",
+  ],
+]
+`;
+
+exports[`generate creates a proptype output from an input pattern 1`] = `
+Array [
+  Array [
+    "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.js",
+    "import PropTypes from 'prop-types';
+
+export const TestInterface = {
+	booleanField: PropTypes.bool.isRequired,
+	numericField: PropTypes.number.isRequired,
+	objectField: PropTypes.shape({
+		booleanField: PropTypes.bool.isRequired,
+		numericField: PropTypes.number.isRequired,
+	}).isRequired,
+};
+",
+  ],
+]
+`;
+
+exports[`generate places output in provided outputPath 1`] = `
+Array [
+  Array [
+    "/srv/nerdwallet/typescript-to-proptypes/generated-prop-types/interface.js",
+    "import PropTypes from 'prop-types';
+
+export const TestInterface = {
+	booleanField: PropTypes.bool.isRequired,
+	numericField: PropTypes.number.isRequired,
 	objectField: PropTypes.shape({
 		booleanField: PropTypes.bool.isRequired,
 		numericField: PropTypes.number.isRequired,

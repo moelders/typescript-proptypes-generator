@@ -3,12 +3,50 @@ import fse from 'fs-extra'
 import generate from '../src';
 
 describe('generate', () => {
-	test('creates a proptype output from an interface', async () => {
-		const fseWriteSpy = jest.spyOn(fse, 'writeFile').mockImplementation(() => Promise.resolve());
+	let fseWriteSpy: jest.SpyInstance;
+
+	beforeEach(() => {
+		fseWriteSpy = jest.spyOn(fse, 'writeFile').mockImplementation(() => Promise.resolve());
+	})
+
+	afterEach(() => {
+		fseWriteSpy.mockRestore();
+	})
+
+	test('creates a proptype output from an input file', async () => {
 		await generate({
-			tsConfig: path.resolve(__dirname, '../tsconfig.json'),
-			prettierConfig: path.resolve(__dirname, '../.prettierrc'),
-			inputDir: path.resolve(__dirname, './fixtures'),
+			tsConfig: 'tsconfig.json',
+			prettierConfig: '.prettierrc',
+			inputPattern: './test/fixtures/interface.ts',
+		})
+		expect(fseWriteSpy.mock.calls).toMatchSnapshot();
+	})
+
+	test('creates a proptype output from an input pattern', async () => {
+		await generate({
+			tsConfig: 'tsconfig.json',
+			prettierConfig: '.prettierrc',
+			inputPattern: './test/fixtures/*.ts',
+		})
+		expect(fseWriteSpy.mock.calls).toMatchSnapshot();
+	})
+
+	test('creates a proptype output from a nested input pattern', async () => {
+		await generate({
+			tsConfig: 'tsconfig.json',
+			prettierConfig: '.prettierrc',
+			inputPattern: './test/fixtures/**/*.ts',
+		})
+		expect(fseWriteSpy.mock.calls).toMatchSnapshot();
+	})
+
+
+	test('places output in provided outputPath', async () => {
+		await generate({
+			tsConfig: 'tsconfig.json',
+			prettierConfig: '.prettierrc',
+			inputPattern: './test/fixtures/interface.ts',
+			outputDir: 'generated-prop-types'
 		})
 		expect(fseWriteSpy.mock.calls).toMatchSnapshot();
 	})

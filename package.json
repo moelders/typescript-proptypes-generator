@@ -19,7 +19,8 @@
 		"test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
 		"build": "rm -rf dist && tsc",
 		"release": "npm run build && npm standard-version",
-		"prepack": "npm i && npm run build"
+		"prepack": "npm i && npm run build",
+		"try": "node ./scripts/generate-proptypes/test.js"
 	},
 	"devDependencies": {
 		"@types/babel__core": "^7.1.2",
