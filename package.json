@@ -1,13 +1,13 @@
 {
-	"name": "typescript-to-proptypes",
-	"version": "1.4.0",
-	"description": "Generate proptypes from typescript declarations",
+	"name": "interfaces-to-proptypes",
+	"version": "0.0.1",
+	"description": "Generate equivalent JS proptypes for interfaces in TS files.",
 	"main": "dist/index.js",
 	"files": [
 		"dist"
 	],
-	"repository": "https://github.com/merceyz/typescript-to-proptypes.git",
-	"author": "merceyz <merceyz@users.noreply.github.com>",
+	"repository": "https://github.com/danReynolds/interfaces-to-proptypes.git",
+	"author": "danreynolds <me@danreynolds.ca>",
 	"license": "MIT",
 	"keywords": [
 		"proptypes",
@@ -19,8 +19,7 @@
 		"test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
 		"build": "rm -rf dist && tsc",
 		"release": "npm run build && npm standard-version",
-		"prepack": "npm i && npm run build",
-		"try": "node ./scripts/generate-proptypes/test.js"
+		"prepack": "npm i && npm run build"
 	},
 	"devDependencies": {
 		"@types/babel__core": "^7.1.2",
