@@ -76,8 +76,7 @@ export const TestInterface = {
 
 ## What about typescript-to-proptypes?
 
-This library uses a modified version of the typescript-to-proptypes API for converting TypeScript definitions to PropTypes. The purpose of that library
-was to expose an API that clients could use to create their own proptype generation scripts. It did not include a script for generating those interfaces itself.
+This library uses a modified version of the typescript-to-proptypes API for converting TypeScript definitions to PropTypes. The purpose of that library was to expose an API that clients could use to create their own proptype generation scripts. It did not include a script for generating those interfaces itself.
 
 [Clients using the library](https://github.com/merceyz/typescript-to-proptypes/network/dependents?package_id=UGFja2FnZS00NTc3Mzk2ODk%3D) like [Material UI](https://github.com/mui-org/material-ui/blob/master/scripts/generateProptypes.ts)
 have created scripts for generating prop types for certain scenarios. In that case it is used for taking JS files in a folder structure of:
@@ -95,6 +94,12 @@ The use case for this project is to:
 1. Expose a generic way to export interfaces from TS files and convert them into prop types for JS files
 2. Not have any coupling to folder structures, declaration files or React components
 3. Not mutate input files
+
+## Thank yous
+
+* Big thanks to the [typescript-to-proptypes library](https://github.com/merceyz/typescript-to-proptypes) on which this is based.
+
+* Another shout out to [Material UI](https://github.com/mui-org/material-ui/blob/master/scripts/generateProptypes.ts) for exposing a script that implements the typescript-to-proptypes API that this project referenced.
 
 ## License
 
