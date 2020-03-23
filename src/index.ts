@@ -11,8 +11,6 @@ import * as ts from 'typescript';
 
 const glob = promisify(globCallback);
 
-const verbose = process.argv.includes('--verbose');
-
 export interface Config {
 	tsConfig: string;
 	prettierConfig: string;
