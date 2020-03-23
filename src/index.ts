@@ -63,7 +63,7 @@ async function generateProptypesForFile(
 	program: ts.Program,
 ): Promise<void> {
 	const proptypes = parser.parseFromProgram(inputFilePath, program);
-	const result = injector.inject(proptypes);
+	const result = injector.inject(inputFilePath, proptypes);
 
 	if (!result) {
 		throw new Error(`Failed to generate prop types for ${inputFilePath}`);
