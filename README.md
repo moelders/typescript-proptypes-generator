@@ -1,8 +1,6 @@
 # interfaces-to-proptypes
 
-An API for converting interfaces to .
-
-Useful for generically exporting [TypeScript](https://www.npmjs.com/package/typescript) interfaces in TS files and converting them to [PropTypes](https://www.npmjs.com/package/prop-types) in generated JS files.
+A library for generically exporting [TypeScript](https://www.npmjs.com/package/typescript) interfaces in TS files and converting them to [PropTypes](https://www.npmjs.com/package/prop-types) in generated JS files.
 
 ## Use cases
 
