@@ -73,5 +73,5 @@ async function generateProptypesForFile(
 		...prettierConfig,
 		filepath: outputFilePath
 	});
-	await fse.writeFile(outputFilePath, prettified);
+	await fse.outputFile(outputFilePath, prettified);
 }

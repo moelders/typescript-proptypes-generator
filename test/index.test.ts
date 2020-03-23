@@ -6,7 +6,7 @@ describe('generate', () => {
 	let fseWriteSpy: jest.SpyInstance;
 
 	beforeEach(() => {
-		fseWriteSpy = jest.spyOn(fse, 'writeFile').mockImplementation(() => Promise.resolve());
+		fseWriteSpy = jest.spyOn(fse, 'outputFile').mockImplementation(() => Promise.resolve());
 	})
 
 	afterEach(() => {
