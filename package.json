@@ -1,12 +1,12 @@
 {
-	"name": "typescript-to-proptypes-generator",
+	"name": "typescript-proptypes-generator",
 	"version": "0.0.1",
 	"description": "Export TypeScript interfaces and types in TS files and convert them to PropTypes in generated JS files.",
 	"main": "dist/index.js",
 	"files": [
 		"dist"
 	],
-	"repository": "https://github.com/danReynolds/typescript-to-proptypes-generator.git",
+	"repository": "https://github.com/danReynolds/typescript-proptypes-generator.git",
 	"author": "danreynolds <me@danreynolds.ca>",
 	"license": "MIT",
 	"keywords": [
