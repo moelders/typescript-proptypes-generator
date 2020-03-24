@@ -16,6 +16,7 @@ export interface Config {
 	prettierConfig: string;
 	inputPattern: string | string[];
 	outputDir?: string;
+	verbose?: boolean,
 }
 
 export default async function generate({
@@ -23,6 +24,7 @@ export default async function generate({
 	prettierConfig: prettierConfigPath,
 	inputPattern,
 	outputDir,
+	verbose = false
 }: Config) {
 	const inputPaths = _.isString(inputPattern) ? [inputPattern] : inputPattern;
 	const absoluteTsConfigPath = configure.getAbsolutePath(tsConfigPath);
@@ -46,11 +48,11 @@ export default async function generate({
 		if (absoluteOutputDir) {
 			const outputFileName = path.basename(inputFilePath).replace(inputFileExt, '.js');
 			const outputFilePath = path.resolve(absoluteOutputDir, outputFileName);
-			return generateProptypesForFile(inputFilePath, outputFilePath, prettierConfig, program);
+			return generateProptypesForFile(inputFilePath, outputFilePath, prettierConfig, program, { verbose });
 		}
 		// If no output directory was provided, put generated JS the file adjacent to the input file
 		const outputFilePath = inputFilePath.replace(inputFileExt, '.js');
-		return generateProptypesForFile(inputFilePath, outputFilePath, prettierConfig, program);
+		return generateProptypesForFile(inputFilePath, outputFilePath, prettierConfig, program, { verbose });
 	});
 
 	await Promise.all(promises);
@@ -61,8 +63,9 @@ async function generateProptypesForFile(
 	outputFilePath: string,
 	prettierConfig: prettier.Options | null,
 	program: ts.Program,
+	options: { verbose: boolean }
 ): Promise<void> {
-	const proptypes = parser.parseFromProgram(inputFilePath, program);
+	const proptypes = parser.parseFromProgram(inputFilePath, program, options);
 	const result = injector.inject(inputFilePath, proptypes);
 
 	if (!result) {

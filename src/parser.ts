@@ -30,6 +30,7 @@ interface ParserOptions {
 	 * @example declare const Component: React.ComponentType<Props>;
 	 */
 	checkDeclarations?: boolean;
+	verbose: boolean;
 }
 
 /**
@@ -107,9 +108,15 @@ export function parseFromProgram(
 	return programNode;
 
 	function visit(node: ts.Node) {
-		if (ts.isInterfaceDeclaration(node)) {
+		if (ts.isInterfaceDeclaration(node) || ts.isTypeAliasDeclaration(node)) {
 			var type = checker.getTypeAtLocation(node.name);
-			parsePropsType(node.name.getText(), type);
+			try {
+				parsePropsType(node.name.getText(), type);
+			} catch(e) {
+				if (parserOptions.verbose) {
+					console.log(`Failed to parse ${node.name}: ${e}`);
+				}
+			}
 		}
 	}
 

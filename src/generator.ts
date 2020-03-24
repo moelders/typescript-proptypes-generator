@@ -163,7 +163,11 @@ export function generate(node: t.Node | t.PropTypeNode[], options: GenerateOptio
 		literals = _.uniqBy(literals, (x) => x.value);
 		rest = _.uniqBy(rest, (x) => (t.isInstanceOfNode(x) ? `${x.type}.${x.instance}` : x.type));
 
-		literals = literals.sort((a, b) => a.value.localeCompare(b.value));
+		if (_.every(literals, literal => _.isString(literal))) {
+			literals = literals.sort((a, b) => a.value.localeCompare(b.value));
+		} else if (_.every(literals, _.isNumber)) {
+			literals = literals.sort();
+		}
 
 		const nodeToStringName = (obj: t.Node): string => {
 			if (t.isInstanceOfNode(obj)) {
