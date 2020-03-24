@@ -114,7 +114,7 @@ export function parseFromProgram(
 				parsePropsType(node.name.getText(), type);
 			} catch(e) {
 				if (parserOptions.verbose) {
-					console.log(`Failed to parse ${node.name}: ${e}`);
+					console.log(`Failed to parse ${node.name.getText()}: ${e}`);
 				}
 			}
 		}
