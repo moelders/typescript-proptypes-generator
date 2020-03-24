@@ -1,4 +1,4 @@
-# interfaces-to-proptypes
+# typescript-proptypes-generator
 
 A library for generically exporting [TypeScript](https://www.npmjs.com/package/typescript) interfaces in TS files and converting them to [PropTypes](https://www.npmjs.com/package/prop-types) in generated JS files.
 
@@ -10,13 +10,13 @@ A library for generically exporting [TypeScript](https://www.npmjs.com/package/t
 ## Install
 
 ```
-npm install interfaces-to-proptypes --save-dev
+npm install typescript-proptypes-generator --save-dev
 ```
 
 ## Usage
 
 ```javascript
-import generate from 'interfaces-to-proptypes';
+import generate from 'typescript-proptypes-generator';
 
 generate({
   tsConfig: './tsconfig.json',
@@ -49,7 +49,7 @@ export interface TestInterface {
 ```
 
 ```typescript
-import generate from 'interfaces-to-proptypes';
+import generate from 'typescript-proptypes-generator';
 
 generate({
   tsConfig: './tsconfig.json',
@@ -72,7 +72,7 @@ export const TestInterface = {
 };
 ```
 
-## What about typescript-to-proptypes?
+## What about the typescript-to-proptypes library?
 
 This library uses a modified version of the typescript-to-proptypes API for converting TypeScript definitions to PropTypes. The purpose of that library was to expose an API that clients could use to create their own proptype generation scripts. It did not include a script for generating those interfaces itself.
 
