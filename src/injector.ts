@@ -62,7 +62,7 @@ function plugin(
 				enter(path) {
 					path.addComment(
 						'leading',
-						`\nAUTO-GENERATED EDIT AT YOUR OWN PERIL:\nThese propTypes were auto-generated from the Typescript interfaces: in ${inputFilePath}\n`
+						`\nAUTO-GENERATED EDIT AT YOUR OWN PERIL:\nThese propTypes were auto-generated from the TypeScript definitions in: ${inputFilePath}\n`
 					);
 					path.node.body = [
 						addSpacedStatement(mapOfPropTypes, "import PropTypes from 'prop-types'")

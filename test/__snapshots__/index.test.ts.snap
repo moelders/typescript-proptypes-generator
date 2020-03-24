@@ -43,6 +43,30 @@ export const NestedTestInterface = {
 ]
 `;
 
+exports[`generate creates a proptype output from a type input file 1`] = `
+Array [
+  Array [
+    "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/type.js",
+    "/*
+AUTO-GENERATED EDIT AT YOUR OWN PERIL:
+These propTypes were auto-generated from the Typescript interfaces: in /srv/nerdwallet/typescript-to-proptypes/test/fixtures/type.ts
+*/
+
+import PropTypes from 'prop-types';
+
+export const TestType = {
+	booleanField: PropTypes.bool.isRequired,
+	numericField: PropTypes.number.isRequired,
+	objectField: PropTypes.shape({
+		booleanField: PropTypes.bool.isRequired,
+		numericField: PropTypes.number.isRequired,
+	}).isRequired,
+};
+",
+  ],
+]
+`;
+
 exports[`generate creates a proptype output from an input file 1`] = `
 Array [
   Array [
@@ -68,6 +92,30 @@ export const TestInterface = {
 `;
 
 exports[`generate creates a proptype output from an input pattern 1`] = `
+Array [
+  Array [
+    "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.js",
+    "/*
+AUTO-GENERATED EDIT AT YOUR OWN PERIL:
+These propTypes were auto-generated from the Typescript interfaces: in /srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.ts
+*/
+
+import PropTypes from 'prop-types';
+
+export const TestInterface = {
+	booleanField: PropTypes.bool.isRequired,
+	numericField: PropTypes.number.isRequired,
+	objectField: PropTypes.shape({
+		booleanField: PropTypes.bool.isRequired,
+		numericField: PropTypes.number.isRequired,
+	}).isRequired,
+};
+",
+  ],
+]
+`;
+
+exports[`generate creates a proptype output from an interface input file 1`] = `
 Array [
   Array [
     "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.js",

@@ -13,11 +13,20 @@ describe('generate', () => {
 		fseWriteSpy.mockRestore();
 	})
 
-	test('creates a proptype output from an input file', async () => {
+	test('creates a proptype output from an interface input file', async () => {
 		await generate({
 			tsConfig: 'tsconfig.json',
 			prettierConfig: '.prettierrc',
 			inputPattern: './test/fixtures/interface.ts',
+		})
+		expect(fseWriteSpy.mock.calls).toMatchSnapshot();
+	})
+
+	test('creates a proptype output from a type input file', async () => {
+		await generate({
+			tsConfig: 'tsconfig.json',
+			prettierConfig: '.prettierrc',
+			inputPattern: './test/fixtures/type.ts',
 		})
 		expect(fseWriteSpy.mock.calls).toMatchSnapshot();
 	})
