@@ -32,7 +32,7 @@ export default async function generate({
 	const absoluteInputPatterns = inputPaths.map(configure.getAbsolutePath);
 	const absoluteOutputDir = outputDir && configure.getAbsolutePath(outputDir);
 	const tsconfig = configure.loadTSConfig(tsConfigPath);
-	const prettierConfig = configure.loadPrettierConfig(absolutePrettierConfigPath);
+	const prettierConfig = absolutePrettierConfigPath ? configure.loadPrettierConfig(absolutePrettierConfigPath) : null;
 	const allFiles = await Promise.all(
 		absoluteInputPatterns.map(absoluteInputPattern => {
 			return glob(absoluteInputPattern, {
@@ -71,10 +71,14 @@ async function generateProptypesForFile(
 	if (!result) {
 		throw new Error(`Failed to generate prop types for ${inputFilePath}`);
 	}
+
+	if (prettierConfig) {
+		const prettified = prettier.format(result, {
+			...prettierConfig,
+			filepath: outputFilePath
+		});
+		return fse.outputFile(outputFilePath, prettified);
+	}
 	
-	const prettified = prettier.format(result, {
-		...prettierConfig,
-		filepath: outputFilePath
-	});
-	await fse.outputFile(outputFilePath, prettified);
+	return fse.outputFile(outputFilePath, result);
 }
