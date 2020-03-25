@@ -1,6 +1,6 @@
 {
 	"name": "typescript-proptypes-generator",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "Export TypeScript interfaces and types in TS files and convert them to PropTypes in generated JS files.",
 	"main": "dist/index.js",
 	"files": [

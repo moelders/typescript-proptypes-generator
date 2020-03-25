@@ -28,7 +28,7 @@ export default async function generate({
 }: Config) {
 	const inputPaths = _.isString(inputPattern) ? [inputPattern] : inputPattern;
 	const absoluteTsConfigPath = configure.getAbsolutePath(tsConfigPath);
-	const absolutePrettierConfigPath = configure.getAbsolutePath(prettierConfigPath);
+	const absolutePrettierConfigPath = prettierConfigPath ? configure.getAbsolutePath(prettierConfigPath) : null;
 	const absoluteInputPatterns = inputPaths.map(configure.getAbsolutePath);
 	const absoluteOutputDir = outputDir && configure.getAbsolutePath(outputDir);
 	const tsconfig = configure.loadTSConfig(tsConfigPath);
