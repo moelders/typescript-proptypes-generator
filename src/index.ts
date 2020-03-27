@@ -66,7 +66,7 @@ async function generateProptypesForFile(
 	options: { verbose: boolean }
 ): Promise<void> {
 	const proptypes = parser.parseFromProgram(inputFilePath, program, options);
-	const result = injector.inject(inputFilePath, proptypes);
+	const result = injector.inject(inputFilePath, outputFilePath, proptypes);
 
 	if (!result) {
 		throw new Error(`Failed to generate prop types for ${inputFilePath}`);

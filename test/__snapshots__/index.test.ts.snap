@@ -6,7 +6,7 @@ Array [
     "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.js",
     "/*
 AUTO-GENERATED EDIT AT YOUR OWN PERIL:
-These propTypes were auto-generated from the TypeScript definitions in: /srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.ts
+These propTypes were auto-generated from the TypeScript definitions in: ../interface.ts
 */
 
 import PropTypes from 'prop-types';
@@ -25,7 +25,7 @@ export const TestInterface = {
     "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/nestedFixture/nestedFixtureInterface.js",
     "/*
 AUTO-GENERATED EDIT AT YOUR OWN PERIL:
-These propTypes were auto-generated from the TypeScript definitions in: /srv/nerdwallet/typescript-to-proptypes/test/fixtures/nestedFixture/nestedFixtureInterface.ts
+These propTypes were auto-generated from the TypeScript definitions in: ../nestedFixtureInterface.ts
 */
 
 import PropTypes from 'prop-types';
@@ -44,7 +44,7 @@ export const NestedTestInterface = {
     "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/type.js",
     "/*
 AUTO-GENERATED EDIT AT YOUR OWN PERIL:
-These propTypes were auto-generated from the TypeScript definitions in: /srv/nerdwallet/typescript-to-proptypes/test/fixtures/type.ts
+These propTypes were auto-generated from the TypeScript definitions in: ../type.ts
 */
 
 import PropTypes from 'prop-types';
@@ -68,7 +68,7 @@ Array [
     "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/type.js",
     "/*
 AUTO-GENERATED EDIT AT YOUR OWN PERIL:
-These propTypes were auto-generated from the TypeScript definitions in: /srv/nerdwallet/typescript-to-proptypes/test/fixtures/type.ts
+These propTypes were auto-generated from the TypeScript definitions in: ../type.ts
 */
 
 import PropTypes from 'prop-types';
@@ -92,7 +92,7 @@ Array [
     "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.js",
     "/*
 AUTO-GENERATED EDIT AT YOUR OWN PERIL:
-These propTypes were auto-generated from the TypeScript definitions in: /srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.ts
+These propTypes were auto-generated from the TypeScript definitions in: ../interface.ts
 */
 
 import PropTypes from 'prop-types';
@@ -111,7 +111,7 @@ export const TestInterface = {
     "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/type.js",
     "/*
 AUTO-GENERATED EDIT AT YOUR OWN PERIL:
-These propTypes were auto-generated from the TypeScript definitions in: /srv/nerdwallet/typescript-to-proptypes/test/fixtures/type.ts
+These propTypes were auto-generated from the TypeScript definitions in: ../type.ts
 */
 
 import PropTypes from 'prop-types';
@@ -135,7 +135,7 @@ Array [
     "/srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.js",
     "/*
 AUTO-GENERATED EDIT AT YOUR OWN PERIL:
-These propTypes were auto-generated from the TypeScript definitions in: /srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.ts
+These propTypes were auto-generated from the TypeScript definitions in: ../interface.ts
 */
 
 import PropTypes from 'prop-types';
@@ -159,7 +159,7 @@ Array [
     "/srv/nerdwallet/typescript-to-proptypes/generated-prop-types/interface.js",
     "/*
 AUTO-GENERATED EDIT AT YOUR OWN PERIL:
-These propTypes were auto-generated from the TypeScript definitions in: /srv/nerdwallet/typescript-to-proptypes/test/fixtures/interface.ts
+These propTypes were auto-generated from the TypeScript definitions in: ../../test/fixtures/interface.ts
 */
 
 import PropTypes from 'prop-types';

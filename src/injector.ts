@@ -3,12 +3,13 @@ import * as babelTypes from '@babel/types';
 import * as t from './types/index';
 import * as generator from './generator';
 import { v4 as uuid } from 'uuid';
+import path from 'path';
 
 /**
  * Injects the PropTypes from parsing each typescript file into a corresponding JavaScript file.
  * @param propTypes Result from `parse` to inject into the JavaScript code
  */
-export function inject(inputFilePath: string, propTypes: t.ProgramNode): string | null {
+export function inject(inputFilePath: string, outputFilePath: string, propTypes: t.ProgramNode): string | null {
 	if (propTypes.body.length === 0) {
 		return null;
 	}
@@ -23,7 +24,7 @@ export function inject(inputFilePath: string, propTypes: t.ProgramNode): string 
 		plugins: [
 			require.resolve('@babel/plugin-syntax-class-properties'),
 			[require.resolve('@babel/plugin-transform-typescript'), { allExtensions: true, isTSX: true }],
-			plugin(propTypes, propTypesToInject, inputFilePath)
+			plugin(propTypes, propTypesToInject, inputFilePath, outputFilePath)
 		],
 		presets: ['@babel/preset-react'],
 		configFile: false,
@@ -44,7 +45,7 @@ export function inject(inputFilePath: string, propTypes: t.ProgramNode): string 
 	return code;
 }
 
-function addSpacedStatement(mapOfPropTypes: Map<string, string>, source: string) {
+function addStatementWithWhitespace(mapOfPropTypes: Map<string, string>, source: string) {
 	// Hack to inject new lines between statements
 	const placeholder = `const a${uuid().replace(/\-/g, '_')} = null;`;
 	mapOfPropTypes.set(placeholder, source);
@@ -54,22 +55,24 @@ function addSpacedStatement(mapOfPropTypes: Map<string, string>, source: string)
 function plugin(
 	propTypes: t.ProgramNode,
 	mapOfPropTypes: Map<string, string>,
-	inputFilePath: string
+	inputFilePath: string,
+	outputFilePath: string
 ): babel.PluginObj {
 	return {
 		visitor: {
 			Program: {
-				enter(path) {
-					path.addComment(
+				enter(visitPath) {
+					const relativeInputFilePath = path.relative(outputFilePath, inputFilePath); 
+					visitPath.addComment(
 						'leading',
-						`\nAUTO-GENERATED EDIT AT YOUR OWN PERIL:\nThese propTypes were auto-generated from the TypeScript definitions in: ${inputFilePath}\n`
+						`\nAUTO-GENERATED EDIT AT YOUR OWN PERIL:\nThese propTypes were auto-generated from the TypeScript definitions in: ${relativeInputFilePath}\n`
 					);
-					path.node.body = [
-						addSpacedStatement(mapOfPropTypes, "import PropTypes from 'prop-types'")
+					visitPath.node.body = [
+						addStatementWithWhitespace(mapOfPropTypes, "import PropTypes from 'prop-types'")
 					];
 					propTypes.body.forEach(props => {
 						const source = generator.generate(props);
-						path.pushContainer('body', addSpacedStatement(mapOfPropTypes, source));
+						visitPath.pushContainer('body', addStatementWithWhitespace(mapOfPropTypes, source));
 					});
 				}
 			}
