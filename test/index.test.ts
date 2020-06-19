@@ -19,7 +19,7 @@ describe('generate', () => {
 			prettierConfig: '.prettierrc',
 			inputPattern: './test/fixtures/interface.ts',
 		})
-		expect(fseWriteSpy.mock.calls).toMatchSnapshot();
+		expect(fseWriteSpy.mock.calls[0][1]).toMatchSnapshot();
 	})
 
 	test('creates a proptype output from a type input file', async () => {
@@ -28,7 +28,7 @@ describe('generate', () => {
 			prettierConfig: '.prettierrc',
 			inputPattern: './test/fixtures/type.ts',
 		})
-		expect(fseWriteSpy.mock.calls).toMatchSnapshot();
+		expect(fseWriteSpy.mock.calls[0][1]).toMatchSnapshot();
 	})
 
 	test('creates a proptype output from an input pattern', async () => {
@@ -37,7 +37,7 @@ describe('generate', () => {
 			prettierConfig: '.prettierrc',
 			inputPattern: './test/fixtures/*.ts',
 		})
-		expect(fseWriteSpy.mock.calls).toMatchSnapshot();
+		expect(fseWriteSpy.mock.calls[0][1]).toMatchSnapshot();
 	})
 
 	test('creates a proptype output from a nested input pattern', async () => {
@@ -46,7 +46,7 @@ describe('generate', () => {
 			prettierConfig: '.prettierrc',
 			inputPattern: './test/fixtures/**/*.ts',
 		})
-		expect(fseWriteSpy.mock.calls).toMatchSnapshot();
+		expect(fseWriteSpy.mock.calls[0][1]).toMatchSnapshot();
 	})
 
 
@@ -57,6 +57,6 @@ describe('generate', () => {
 			inputPattern: './test/fixtures/interface.ts',
 			outputDir: 'generated-prop-types'
 		})
-		expect(fseWriteSpy.mock.calls).toMatchSnapshot();
+		expect(fseWriteSpy.mock.calls[0][1]).toMatchSnapshot();
 	})
 });
