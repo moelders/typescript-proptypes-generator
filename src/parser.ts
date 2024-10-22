@@ -115,7 +115,7 @@ export function parseFromProgram(
 					parsePropsType(node.name.getText(), type);
 				} catch(e) {
 					if (parserOptions.verbose) {
-						console.log(`Failed to parse ${node.name.getText()}: ${e}`);
+						console.warn(`Failed to parse ${node.name.getText()}: ${e}`);
 					}
 				}
 			}
@@ -305,9 +305,15 @@ export function parseFromProgram(
 			return t.objectNode();
 		}
 
-		console.warn(
-			`Unable to handle node of type "ts.TypeFlags.${ts.TypeFlags[type.flags]}", using any`
-		);
+		if (parserOptions.verbose) {
+			console.warn(
+				`Unable to handle node of ${ type.flags && ts.TypeFlags[type.flags]
+					? `type "ts.TypeFlags.${ts.TypeFlags[type.flags]}"`
+					: 'undefined type'
+				}, using "any"`
+			);
+		}
+
 		return t.anyNode();
 	}
 

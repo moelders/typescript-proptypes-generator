@@ -1,5 +1,11 @@
 import * as t from './types';
-import _ from 'lodash';
+import {
+	partition,
+	uniqBy,
+	isString,
+	every,
+	isNumber
+} from 'lodash';
 
 export interface GenerateOptions {
 	/**
@@ -34,6 +40,11 @@ export interface GenerateOptions {
 	 * }
 	 */
 	comment?: string;
+
+	/**
+	 * Logging enabled.
+	 */
+	verbose?: boolean;
 }
 
 /**
@@ -47,6 +58,7 @@ export function generate(node: t.Node | t.PropTypeNode[], options: GenerateOptio
 		importedName = 'PropTypes',
 		includeJSDoc = true,
 		shouldInclude,
+		verbose
 	} = options;
 
 	function jsDoc(node: t.PropTypeNode | t.LiteralNode) {
@@ -89,11 +101,9 @@ export function generate(node: t.Node | t.PropTypeNode[], options: GenerateOptio
 	}
 
 	if (t.isPropTypeNode(node)) {
-		let isOptional = false;
 		let propType = { ...node.propType };
 
 		if (t.isUnionNode(propType) && propType.types.some(t.isUndefinedNode)) {
-			isOptional = true;
 			propType.types = propType.types.filter(
 				(prop) => !t.isUndefinedNode(prop) && !(t.isLiteralNode(prop) && prop.value === 'null')
 			);
@@ -157,13 +167,13 @@ export function generate(node: t.Node | t.PropTypeNode[], options: GenerateOptio
 	}
 
 	if (t.isUnionNode(node)) {
-		let [literals, rest] = _.partition(node.types, t.isLiteralNode);
-		literals = _.uniqBy(literals, (x) => x.value);
-		rest = _.uniqBy(rest, (x) => (t.isInstanceOfNode(x) ? `${x.type}.${x.instance}` : x.type));
+		let [literals, rest] = partition(node.types, t.isLiteralNode);
+		literals = uniqBy(literals, (x) => x.value);
+		rest = uniqBy(rest, (x) => (t.isInstanceOfNode(x) ? `${x.type}.${x.instance}` : x.type));
 
-		if (_.every(literals, literal => _.isString(literal))) {
+		if (every(literals, (literal) => isString(literal))) {
 			literals = literals.sort((a, b) => a.value.localeCompare(b.value));
-		} else if (_.every(literals, _.isNumber)) {
+		} else if (every(literals, isNumber)) {
 			literals = literals.sort();
 		}
 
@@ -206,5 +216,9 @@ export function generate(node: t.Node | t.PropTypeNode[], options: GenerateOptio
 			.reduce((prev, curr) => `${prev},${curr}`)}])`;
 	}
 
-	throw new Error(`Nothing to handle node of type "${node.type}"`);
+	if (verbose) {
+		console.warn(`Nothing to handle node of type "${node.type}"`);
+	}
+
+	return '';
 }

@@ -9,7 +9,12 @@ import path from 'path';
  * Injects the PropTypes from parsing each typescript file into a corresponding JavaScript file.
  * @param propTypes Result from `parse` to inject into the JavaScript code
  */
-export function inject(inputFilePath: string, outputFilePath: string, propTypes: t.ProgramNode): string | null {
+export function inject(
+		inputFilePath: string,
+		outputFilePath: string,
+		propTypes: t.ProgramNode,
+		{ verbose }: { verbose?: boolean}
+): string | null {
 	if (propTypes.body.length === 0) {
 		return null;
 	}
@@ -24,7 +29,7 @@ export function inject(inputFilePath: string, outputFilePath: string, propTypes:
 		plugins: [
 			require.resolve('@babel/plugin-syntax-class-properties'),
 			[require.resolve('@babel/plugin-transform-typescript'), { allExtensions: true, isTSX: true }],
-			plugin(propTypes, propTypesToInject, inputFilePath, outputFilePath)
+			plugin(propTypes, propTypesToInject, inputFilePath, outputFilePath, { verbose })
 		],
 		presets: ['@babel/preset-react'],
 		configFile: false,
@@ -56,13 +61,14 @@ function plugin(
 	propTypes: t.ProgramNode,
 	mapOfPropTypes: Map<string, string>,
 	inputFilePath: string,
-	outputFilePath: string
+	outputFilePath: string,
+	{ verbose }: { verbose?: boolean}
 ): babel.PluginObj {
 	return {
 		visitor: {
 			Program: {
 				enter(visitPath) {
-					const relativeInputFilePath = path.relative(outputFilePath, inputFilePath); 
+					const relativeInputFilePath = path.relative(outputFilePath, inputFilePath);
 					visitPath.addComment(
 						'leading',
 						`\nAUTO-GENERATED EDIT AT YOUR OWN PERIL:\nThese propTypes were auto-generated from the TypeScript definitions in: ${relativeInputFilePath}\n`
@@ -71,7 +77,7 @@ function plugin(
 						addStatementWithWhitespace(mapOfPropTypes, "import PropTypes from 'prop-types'")
 					];
 					propTypes.body.forEach(props => {
-						const source = generator.generate(props);
+						const source = generator.generate(props, { verbose });
 						visitPath.pushContainer('body', addStatementWithWhitespace(mapOfPropTypes, source));
 					});
 				}
