@@ -102,9 +102,7 @@ export function generate(node: t.Node | t.PropTypeNode[], options: GenerateOptio
 			}
 		}
 
-		return `${jsDoc(node)}"${node.name}": ${generate(propType, options)}${
-			isOptional ? '' : '.isRequired'
-		},`;
+		return `${jsDoc(node)}"${node.name}": ${generate(propType, options)}${ t.isRequired(node) ? '.isRequired' : '' },`;
 	}
 
 	if (t.isInterfaceNode(node)) {

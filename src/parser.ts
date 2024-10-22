@@ -166,7 +166,8 @@ export function parseFromProgram(
 				return t.propTypeNode(
 					symbol.getName(),
 					getDocumentation(symbol),
-					declaration.questionToken ? t.unionNode([t.undefinedNode(), elementNode]) : elementNode
+					declaration.questionToken ? t.unionNode([t.undefinedNode(), elementNode]) : elementNode,
+					symbol.getFlags() as t.FlagsExtended
 				);
 			}
 		}
