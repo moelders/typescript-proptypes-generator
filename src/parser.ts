@@ -1,6 +1,7 @@
 import * as ts from 'typescript';
 import * as t from './types';
 import * as doctrine from 'doctrine';
+import { PROP_TYPE_NODE_NAMES } from './constants';
 
 /**
  * Options that specify how the parser should act
@@ -154,11 +155,7 @@ export function parseFromProgram(
 			ts.isTypeReferenceNode(declaration.type)
 		) {
 			const name = declaration.type.typeName.getText();
-			if (
-				name === 'React.ElementType' ||
-				name === 'React.ComponentType' ||
-				name === 'React.ReactElement'
-			) {
+			if (PROP_TYPE_NODE_NAMES.includes(name)) {
 				const elementNode = t.elementNode(
 					name === 'React.ReactElement' ? 'element' : 'elementType'
 				);
@@ -179,23 +176,25 @@ export function parseFromProgram(
 			: // The properties of Record<..., ...> don't have a declaration, but the symbol has a type property
 			  ((symbol as any).type as ts.Type);
 
-		if (!type) {
-			throw new Error('No types found');
-		}
-
 		// Typechecker only gives the type "any" if it's present in a union
 		// This means the type of "a" in {a?:any} isn't "any | undefined"
 		// So instead we check for the questionmark to detect optional types
 		let parsedType: t.Node | undefined = undefined;
-		if (type.flags & ts.TypeFlags.Any && declaration && ts.isPropertySignature(declaration)) {
-			parsedType = declaration.questionToken
-				? t.unionNode([t.undefinedNode(), t.anyNode()])
-				: t.anyNode();
-		} else {
-			parsedType = checkType(type, typeStack, symbol.getName());
+
+		if (type) {
+			if (type.flags & ts.TypeFlags.Any && declaration && ts.isPropertySignature(declaration)) {
+				parsedType = declaration.questionToken
+					? t.unionNode([t.undefinedNode(), t.anyNode()])
+					: t.anyNode();
+			} else {
+				parsedType = checkType(type, typeStack, symbol.getName());
+			}
+		}
+		else {
+			parsedType = checkType({} as ts.Type, typeStack, symbol.getName());
 		}
 
-		return t.propTypeNode(symbol.getName(), getDocumentation(symbol), parsedType);
+		return t.propTypeNode(symbol.getName(), getDocumentation(symbol), parsedType, symbol.getFlags() as t.FlagsExtended);
 	}
 
 	function checkType(type: ts.Type, typeStack: number[], name: string): t.Node {
@@ -218,6 +217,7 @@ export function parseFromProgram(
 				case 'React.ElementType': {
 					return t.elementNode('elementType');
 				}
+				case 'React.ReactPortal':
 				case 'React.ReactNode': {
 					return t.unionNode([t.elementNode('node'), t.undefinedNode()]);
 				}
@@ -238,7 +238,7 @@ export function parseFromProgram(
 			return t.arrayNode(checkType(arrayType, typeStack, name));
 		}
 
-		if (type.isUnion()) {
+		if (typeof type.isUnion === 'function' && type.isUnion()) {
 			return t.unionNode(type.types.map((x) => checkType(x, typeStack, name)));
 		}
 
@@ -272,13 +272,13 @@ export function parseFromProgram(
 			return t.literalNode('null');
 		}
 
-		if (type.getCallSignatures().length) {
+		if (typeof type.getCallSignatures === 'function' && type.getCallSignatures().length) {
 			return t.functionNode();
 		}
 
 		// Object-like type
 		{
-			const properties = type.getProperties();
+			const properties = typeof type.getProperties === 'function' ? type.getProperties() : [];
 			if (properties.length) {
 				if (
 					shouldResolveObject({ name, propertyCount: properties.length, depth: typeStack.length })
@@ -335,6 +335,7 @@ export function parseFromProgram(
 		}
 
 		const comment = ts.displayPartsToString(symbol.getDocumentationComment(checker));
+
 		return comment ? comment : undefined;
 	}
 }
