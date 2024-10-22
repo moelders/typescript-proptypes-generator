@@ -1,0 +1,1 @@
+{"version":3,"file":"instanceOf.js","sourceRoot":"","sources":["../../../src/types/props/instanceOf.ts"],"names":[],"mappings":";;AAQA,wCAKC;AAED,4CAEC;AAfD,IAAM,UAAU,GAAG,gBAAgB,CAAC;AAMpC,SAAgB,cAAc,CAAC,QAAgB;IAC9C,OAAO;QACN,IAAI,EAAE,UAAU;QAChB,QAAQ,UAAA;KACR,CAAC;AACH,CAAC;AAED,SAAgB,gBAAgB,CAAC,IAAU;IAC1C,OAAO,IAAI,CAAC,IAAI,KAAK,UAAU,CAAC;AACjC,CAAC"}
