@@ -88,7 +88,7 @@ function generate(_a) {
     return __awaiter(this, arguments, void 0, function (_b) {
         var inputPaths, absoluteTsConfigPath, absolutePrettierConfigPath, absoluteInputPatterns, absoluteOutputDir, tsconfig, prettierConfig, allFiles, files, program, promises;
         var _this = this;
-        var tsConfigPath = _b.tsConfig, prettierConfigPath = _b.prettierConfig, inputPattern = _b.inputPattern, ignorePattern = _b.ignorePattern, outputDir = _b.outputDir, _c = _b.verbose, verbose = _c === void 0 ? false : _c;
+        var tsConfigPath = _b.tsConfig, prettierConfigPath = _b.prettierConfig, inputPattern = _b.inputPattern, ignorePattern = _b.ignorePattern, outputDir = _b.outputDir, baseDir = _b.baseDir, _c = _b.verbose, verbose = _c === void 0 ? false : _c;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
@@ -110,12 +110,15 @@ function generate(_a) {
                     files = _.compact(_.flatten(allFiles));
                     program = parser.createProgram(files, tsconfig);
                     promises = files.map(function (inputFilePath) { return __awaiter(_this, void 0, void 0, function () {
-                        var inputFileExt, outputFileName, outputFilePath_1, outputFilePath;
+                        var inputFileExt, relativeFileDir, outputFileName, outputFilePath_1, outputFilePath;
                         return __generator(this, function (_a) {
                             inputFileExt = path.extname(inputFilePath);
+                            relativeFileDir = baseDir
+                                ? path.dirname(inputFilePath.slice(inputFilePath.indexOf(baseDir) + baseDir.length))
+                                : '';
                             if (absoluteOutputDir) {
                                 outputFileName = path.basename(inputFilePath).replace(inputFileExt, '.js');
-                                outputFilePath_1 = path.resolve(absoluteOutputDir !== null && absoluteOutputDir !== void 0 ? absoluteOutputDir : '', outputFileName);
+                                outputFilePath_1 = path.resolve(absoluteOutputDir !== null && absoluteOutputDir !== void 0 ? absoluteOutputDir : '', relativeFileDir, outputFileName);
                                 return [2 /*return*/, generateProptypesForFile(inputFilePath, outputFilePath_1, prettierConfig, program, { verbose: verbose })];
                             }
                             outputFilePath = inputFilePath.replace(inputFileExt, '.js');
