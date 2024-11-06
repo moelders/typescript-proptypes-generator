@@ -17,6 +17,7 @@ export interface Config {
 	inputPattern: string | string[];
 	ignorePattern?: string | string[];
 	outputDir?: string;
+	baseDir?: string;
 	verbose?: boolean,
 }
 
@@ -26,6 +27,7 @@ export default async function generate({
 	inputPattern,
 	ignorePattern,
 	outputDir,
+	baseDir,
 	verbose = false
 }: Config) {
 	const inputPaths = _.isString(inputPattern) ? [inputPattern] : inputPattern;
@@ -49,9 +51,13 @@ export default async function generate({
 
 	const promises = files.map<Promise<void>>(async inputFilePath => {
 		const inputFileExt = path.extname(inputFilePath);
+		const relativeFileDir = baseDir
+			? path.dirname(inputFilePath.slice(inputFilePath.indexOf(baseDir) + baseDir.length))
+			: '';
+
 		if (absoluteOutputDir) {
 			const outputFileName = path.basename(inputFilePath).replace(inputFileExt, '.js');
-			const outputFilePath = path.resolve(absoluteOutputDir ?? '', outputFileName);
+			const outputFilePath = path.resolve(absoluteOutputDir ?? '', relativeFileDir, outputFileName);
 			return generateProptypesForFile(inputFilePath, outputFilePath, prettierConfig, program, { verbose });
 		}
 		// If no output directory was provided, put generated JS the file adjacent to the input file

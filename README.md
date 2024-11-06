@@ -30,7 +30,8 @@ generate({
 | tsConfig       | Relative tsConfig file path for processing TS files                                    | true      |
 | prettierConfig | Relative prettierConfig file path for formatting the generated JS files                | false     |
 | inputPattern   | Pattern or array of patterns of files to parse for interfaces and convert to proptypes | true      |
-| outputDir      | Output directory to put generated JS files in, defaults to adjacent to the input file  | false     | 
+| outputDir      | Output directory to put generated JS files in, defaults to adjacent to the input file  | false     |
+| baseDir      | Base directory to keep files in their respective relative folders from base directory  | false     |
 
 ## Example
 

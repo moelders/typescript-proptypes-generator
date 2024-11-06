@@ -48,7 +48,6 @@ describe('generate', () => {
 		expect(fseWriteSpy.mock.calls[0][1]).toMatchSnapshot();
 	})
 
-
 	test('places output in provided outputPath', async () => {
 		await generate({
 			tsConfig: 'tsconfig.json',
@@ -57,5 +56,17 @@ describe('generate', () => {
 			outputDir: 'generated-prop-types'
 		})
 		expect(fseWriteSpy.mock.calls[0][1]).toMatchSnapshot();
+	})
+
+	test('places output in provided outputPath keeping directories from baseDir', async () => {
+		await generate({
+			tsConfig: 'tsconfig.json',
+			prettierConfig: '.prettierrc',
+			inputPattern: './test/fixtures/*.ts',
+			outputDir: 'generated-prop-types',
+			baseDir: 'test/'
+		})
+
+		expect(fseWriteSpy.mock.calls[1][0]).toMatch(/\/generated-prop-types\/fixtures\/\w+\.js/);
 	})
 });
