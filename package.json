@@ -16,6 +16,7 @@
 	],
 	"scripts": {
 		"test": "jest test/index.test.ts",
+		"test:watch": "npm run test -- --watchAll",
 		"test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
 		"build": "rm -rf dist && tsc",
 		"release": "npm run build && npm standard-version",
